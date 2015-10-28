@@ -1,8 +1,9 @@
 import os
 import csv
+#import Apriori
 
 #log-file dir
-G_LOG_FILE_DIR = '/home/wushuang/Downloads/365/3month-logs1'
+G_LOG_FILE_DIR = '/home/wushuang/Downloads/365/3month-logs'
 
 #log-file list
 G_LOG_FILE_LIST = []
@@ -16,14 +17,20 @@ G_OUTPUT = []
 #
 G_DIC = {}
 
-
 def outputCleanedData(tmp_dir):
     global G_OUTPUT
     f = open(tmp_dir,'w')
-
     for i in G_OUTPUT:
         t = ','.join(i)
         f.write(t + '\n')
+    f.close()
+def outputCanData():
+    m = open(G_LOG_FILE_DIR + '/out/' + 'Cresult.txt','w')
+    for i in G_DIC.items():
+        i1 = list(i[1])
+        i2 = ','.join(sorted(i1,key=(lambda x:int(x[x.rfind('-')+1:])),reverse = False))
+        m.write(i[0] + ':' + i2 + '\n')
+    m.close()
 
 def checkProjectValue(line):
     if len(line) > 2 and line[-2] in G_PROJECT_LIST:
@@ -38,10 +45,10 @@ def getProjectInfo():
         tmp_code = map(lambda x:x[1]+'-'+x[2],csvFile)
         G_PROJECT_LIST = frozenset(tmp_code)
 def getLogData(f_Path):
-    global G_LOG_FILE_LIST,G_OUTPUT
+    global G_LOG_FILE_LIST,G_OUTPUT,G_DIC
 
     G_LOG_FILE_LIST = filter(lambda x:os.path.isfile(x) == True,map(lambda x:f_Path + '/' + x,os.listdir(f_Path)))
-
+    G_DIC = {}
     for a in G_LOG_FILE_LIST:
         try:
             file = open(a)
@@ -77,6 +84,8 @@ def getLogData(f_Path):
 def main():
     global G_PROJECT_DIR
     getLogData(G_LOG_FILE_DIR)
-    pass
+    outputCanData()
+    #apriori = Apriori(G_PROJECT_DIR,G_LOG_FILE_DIR + '/out/' + 'Cresult.txt')
+
 if __name__ == '__main__':
     main()
