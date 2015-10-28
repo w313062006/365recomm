@@ -39,7 +39,6 @@ def createTree(dataSet, minSup=1):
         return None, None
     for k in headerTable:
         headerTable[k] = [headerTable[k], None]
-    #print 'headerTable: ',headerTable
     retTree = treeNode('Null Set', 1, None)
     #two time
     for tranSet, count in dataSet.items():
@@ -76,8 +75,7 @@ def updateHeader(nodeToTest, targetNode):
 def createInitSet(dataset):
     retDic = {}
     for trans in dataset:
-        retDic[frozenset(trans)] = 1
-
+        retDic[frozenset(trans)] = retDic.get(frozenset(trans),0) + 1
     return retDic
 
 def getprefixPath(leafNode,prefixPath):
@@ -104,7 +102,7 @@ def mineTree(Tree,headerTable,minSup,prefixPath,frequentItem):
         newfrequen = prefixPath.copy()
         newfrequen.add(item)
         frequentItem.append(newfrequen)
-
+        print newfrequen,headerTable[item][0]
         Citems = findPrefixPath(headerTable[item][1])
 
 
@@ -115,19 +113,23 @@ def mineTree(Tree,headerTable,minSup,prefixPath,frequentItem):
             mineTree(Ctree,Chead,minSup,newfrequen,frequentItem)
 
 
+def main():
+    G_LOG_FILE_DIR = '/home/wushuang/Downloads/365/3month-logs'
+    m = open(G_LOG_FILE_DIR + '/out/' + 'Cresult.txt','r').readlines()
+    t =[]
+    for i in m:
+        t.append(i[i.rfind(':')+1:].strip().split(','))
+    initSet = createInitSet(t)
+    myFPtree,myHeaderTab = createTree(initSet,395)
+    frequeItems = []
+    mineTree(myFPtree,myHeaderTab,395,set([]),frequeItems)
+    m = open('FCresult15043.txt','w')
+    for i in frequeItems:
+        m.write(' '.join(list(i))+'\n')
+    m.close()
 
 
-G_LOG_FILE_DIR = '/home/wushuang/Downloads/365/3month-logs'
-m = open(G_LOG_FILE_DIR + '/out/' + 'Cresult.txt','r').readlines()
-t =[]
-for i in m:
-    t.append(i[i.rfind(':')+1:].strip().split(','))
-initSet = createInitSet(t)
-myFPtree,myHeaderTab = createTree(initSet,40)
-frequeItems = []
-mineTree(myFPtree,myHeaderTab,40,set([]),frequeItems)
-m = open('FCresult1502.txt','w')
-for i in frequeItems:
-    m.write(' '.join(list(i))+'\n')
-m.close()
+if __name__ == '__main__':
+    main()
+
 
