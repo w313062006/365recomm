@@ -123,7 +123,7 @@ def main():
     myFPtree,myHeaderTab = createTree(initSet,395)
     frequeItems = []
     mineTree(myFPtree,myHeaderTab,395,set([]),frequeItems)
-    m = open('FCresult15043.txt','w')
+    m = open('FCresult1902.txt','w')
     for i in frequeItems:
         m.write(' '.join(list(i))+'\n')
     m.close()
