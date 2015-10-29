@@ -1,4 +1,5 @@
 import csv
+import random
 
 PROJECT_ID = {}
 def getProjectId():
@@ -8,7 +9,7 @@ def getProjectId():
         for index,i in enumerate(csvFile):
             if index != 0:
                 PROJECT_ID.update({i[1] + '-' + i[2]:index})
-
+        input.close()
 def findid(x):
     return str(PROJECT_ID[x])
 def main():
@@ -28,12 +29,18 @@ def main():
     item_dic = sorted(item_dic.items(),key=lambda x:int(x[0][x[0].rfind('-')+1:]))
     getProjectId()
 
-    output =open('recomm_result','w')
+    output =open('recomm_result.txt','w')
 
     for i in item_dic:
-        a = ' 0' * (10-(len(list(i[1])[:10])))
-        b = ' '.join(map(lambda x:findid(x),list(i[1])[:10]))
-        output.write(findid(i[0]) + ' ' + b + a +'\n')
+
+        tmp_len = len(list(i[1])[:10])
+        if tmp_len < 10:
+            a = ' 0' * (10-tmp_len)
+            b1 = ' '.join(map(lambda x:findid(x),list(i[1])[:10]))
+            output.write(findid(i[0]) + ' ' + b1 + a +'\n')
+        else:
+            b2 = ' '.join(map(lambda x:findid(x),random.sample(list(i[1]),10)))
+            output.write(findid(i[0]) + ' ' + b2 +'\n')
 
 if __name__ == '__main__':
     main()
